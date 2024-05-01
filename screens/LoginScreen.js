@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View, Image, useWindowDimensions, TextInput, TouchableOpacity, Alert} from 'react-native'
 import React, {useEffect, useState} from 'react'
-import Logo from '../assets/icon.png'
+import Logo from '../assets/logo.png'
 import Input from '../components/CustomInput.js';
 import ButtonComp from '../components/CustomButton.js';
 import { useNavigation } from '@react-navigation/native';
