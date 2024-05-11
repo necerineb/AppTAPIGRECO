@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 10,
         marginVertical: 5,
-
     },
     input:{},
     textInput:{

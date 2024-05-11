@@ -7,10 +7,10 @@ import {
     TextInput,
     Alert,
     TouchableOpacity,
-    ScrollView
 } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler';
 import React, {useEffect, useState} from 'react'
-import Logo from '../assets/icon.png';
+import Logo from '../assets/logo.png';
 import Input from '../components/CustomInput.js';
 import Button from '../components/CustomButton.js';
 import CustomRadioButton from "../components/CustomRadioButton.js";

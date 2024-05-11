@@ -1,4 +1,3 @@
-
 import Navigation from "./components/Navigation.js";
 import { initializeApp } from 'firebase/app';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native'
