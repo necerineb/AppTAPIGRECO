@@ -1,5 +1,6 @@
 import Navigation from "./components/Navigation.js";
 import { initializeApp } from 'firebase/app';
+import 'react-native-gesture-handler';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native'
 const firebaseConfig = {
   apiKey: "AIzaSyAO4DMndvtOoDwJd33zEs7mLWVkl067Cf0",

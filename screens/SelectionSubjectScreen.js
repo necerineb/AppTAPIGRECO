@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, TextInput, StyleSheet, Alert} from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView} from 'react-native';
 import Button from '../components/CustomButton'
 
 import {useNavigation, useRoute} from "@react-navigation/native";

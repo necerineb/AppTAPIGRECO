@@ -14,16 +14,19 @@ const HomeScreenT = () => {
     console.log("datiUtente Home : " + JSON.stringify(datiUtente));
 
     return(
-        <View>
+        <View style={styles.container}>
             <Text>Home Professori</Text>
             <Text>Bentornato! {datiUtente.nome} {datiUtente.cognome}</Text>
 
-            <Button
-                text={"aggiugni lezione"}
-                onPress={() => navigation.navigate("Disponibilita", {
-                    data: datiUtente
-                })}
-            />
+            <View style={styles.comando}>
+                <Button
+                    text={"aggiugni lezione"}
+                    onPress={() => navigation.navigate("Disponibilita", {
+                        data: datiUtente
+                    })}
+                />
+            </View>
+
 
         </View>
     )
@@ -32,4 +35,14 @@ const HomeScreenT = () => {
 export default HomeScreenT
 
 const styles = StyleSheet.create({
+    container: {
+        width: '100%',
+        marginTop: 20,
+        padding: 20,
+    },
+    comando: {
+        padding: 20,
+        alignSelf: "center",
+        width: '70%',
+    }
 })

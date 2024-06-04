@@ -8,7 +8,7 @@ import {
     Alert,
     TouchableOpacity,
 } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react'
 import Logo from '../assets/logo.png';
 import Input from '../components/CustomInput.js';
