@@ -2,6 +2,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import RNPickerSelect from 'react-native-picker-select';
 import Button from '../components/CustomButton';
+import ButtonComp from '../components/CustomButton.js';
 import React, { useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getDatabase, ref, push, set } from 'firebase/database';
@@ -72,9 +73,11 @@ const AddDisponibility = () => {
         const ore = time.getHours();
 
         if(ore < 14 || ore > 18){
-            Alert.alert('Error', 'lo studio apre alle 14:30 e chiude alle 19');ù
+            Alert.alert('Error', 'lo studio apre alle 14:30 e chiude alle 19');
+            return null;
         }else if(ore === 14 && minutes < 30){
             Alert.alert('Error', 'lo studio apre alle 14:30');
+            return null;
         }else{
             if (minutes >= 30) {
                 time.setMinutes(30);
@@ -83,11 +86,7 @@ const AddDisponibility = () => {
             }
         }
 
-        if (minutes >= 30) {
-            time.setMinutes(30);
-        } else {
-            time.setMinutes(0);
-        }
+        console.log("time: " + time);
         return time;
     };
 
@@ -140,9 +139,14 @@ const AddDisponibility = () => {
 
     return (
         <View style={styles.container}>
-            <Button text="Select Date" onPress={showDatePicker} />
-            <Button text="Select Start Time" onPress={showStartTimePicker} />
-            <Button text="Select End Time" onPress={showEndTimePicker} />
+
+            <View style={styles.titolo}>
+                <Text style={styles.font}>Aggiungi disponibilità</Text>
+            </View>
+
+            <Button text="Seleziona data" onPress={showDatePicker} />
+            <Button text="Seleziona inizio lezione" onPress={showStartTimePicker} />
+            <Button text="Seleziona fine lezione" onPress={showEndTimePicker} />
 
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
@@ -176,25 +180,28 @@ const AddDisponibility = () => {
             />
 
             <Text style={styles.selectedDateText}>
-                Selected Date: {selectedDate ? selectedDate.toLocaleDateString() : ''}
+                Data lezione: {selectedDate ? selectedDate.toLocaleDateString() : ''}
             </Text>
 
             <Text style={styles.selectedTimeText}>
-                Selected Start Time: {selectedStartTime ? selectedStartTime.toLocaleTimeString() : ''}
+                Inizio lezione: {selectedStartTime ? selectedStartTime.toLocaleTimeString() : ''}
             </Text>
 
             <Text style={styles.selectedTimeText}>
-                Selected End Time: {selectedEndTime ? selectedEndTime.toLocaleTimeString() : ''}
+                Fine lezione: {selectedEndTime ? selectedEndTime.toLocaleTimeString() : ''}
             </Text>
 
             <Text style={styles.selectedSubjectText}>
-                Selected Subject: {selectedSubject || 'N/A'}
+                Materia della lezione: {selectedSubject || 'N/A'}
             </Text>
 
-            <Button
-                text="fatto"
-                onPress={createDisponibility}
-            />
+            <View style={styles.fatto}>
+                <ButtonComp
+                            text="fatto"
+                            onPress={createDisponibility}
+                />
+            </View>
+
         </View>
     );
 };
@@ -202,9 +209,16 @@ const AddDisponibility = () => {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        flex: 1,
+        padding: 30,
+        marginTop: 30,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    titolo: {
+        marginBottom: 50,
+    },
+    font: {
+        fontSize: 20,
     },
     selectedDateText: {
         marginTop: 10,
@@ -218,6 +232,10 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 16,
     },
+    fatto: {
+        width: '50%',
+        marginTop: 20,
+    }
 });
 
 export default AddDisponibility;

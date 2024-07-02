@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {Alert, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import navigation from "../components/Navigation.js";
 import {useRoute} from "@react-navigation/native";
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
@@ -12,6 +12,8 @@ const StudentHomeScreen = () => {
     const [lessonsSet, setLessonsSet] = useState(new Set());
     const [visible, setVisible] = useState(false);
     const [selectedLessons, setSelectedLessons] = useState([]);
+    const [data, setData] = useState([]); // dati prenotazioni
+
 
     const route = useRoute();
     const datiUtente = route.params?.dati;
@@ -24,51 +26,97 @@ const StudentHomeScreen = () => {
         get(refLessons)
             .then(snapshot => {
                 if (snapshot.exists()) {
-
                     const lezioni = snapshot.val();
                     console.log(lezioni);
+                    const prenotazioni = [];
+                    const today = new Date();
+                    console.log("oggi: " + today.getMonth());
 
                     for(const key in lezioni){
                         const lezione = lezioni[key];
-                        console.log(`----- lezione ${key} ------`);
-                        console.log(`Elemento con chiave: ${key}`);
-                        console.log(`Data: ${lezione.data}`);
-                        console.log(`Materia: ${lezione.materia}`);
-                        console.log(`OraFine: ${lezione.oraFine}`);
-                        console.log(`OraInizio: ${lezione.oraInizio}`);
-
-                        console.log(`Professore: ${lezione.professore}`);
-                        console.log(`Studente: ${lezione.studente}`);
                         const stringaData = lezione.data;
                         const elementiData = stringaData.split(" ");
                         const dataFormattata = `${elementiData[2]}-${elementiData[0].padStart(2, '0')}-${elementiData[1].padStart(2, '0')}`;
-                        console.log("ultima stampa" + dataFormattata); // Output: 2024-06-15
 
-                        if(lezione.studente === ''){ // mettere condizioni se lo studente è dello stessa classe e stesso istituto
+                        console.log("mese lezione: " + today.getUTCDay());
+                        if(lezione.studente === '' &&
+                            (
+                                elementiData[0] >= today.getMonth() + 1 && elementiData[2] == today.getFullYear()
 
+                            ) ||
+                            (
+                                elementiData[2] > today.getFullYear()
+
+                            )
+
+                        ){ // mettere condizioni se lo studente è dello stessa classe e stesso istituto
                             const refProf = ref(getDatabase(), 'teachers/' + lezione.professore);
+                            get(refProf)
+                                .then(snapshot => {
+                                    if (snapshot.exists()) {
+                                        const nomeProf = snapshot.val();
+                                        //console.log("nomeProf: " + nomeProf.nome);
+                                        fetchLessons(dataFormattata, lezione.materia, lezione.oraInizio, lezione.oraFine, nomeProf.nome ,key);
+                                    }
+                                })
+                        }else if(lezione.studente === datiUtente.nome &&
+                            (
+                                elementiData[0] >= today.getMonth() + 1 && elementiData[2] == today.getFullYear()
 
+                            ) ||(
+
+                                elementiData[0] == today.getMonth() + 1 && elementiData[2] == today.getFullYear() &&
+                                    elementiData[1] > today.getDay()
+
+                            ) ||
+                            (
+                                elementiData[2] > today.getFullYear()
+
+                            )){
+
+                            console.log("sono uguali");
+                            console.log("nome utente: " + datiUtente.nome +  "   e' uguale a: " + lezione.studente);
+                            const refProf = ref(getDatabase(), 'teachers/' + lezione.professore);
 
                             get(refProf)
                                 .then(snapshot => {
                                     if (snapshot.exists()) {
                                         const nomeProf = snapshot.val();
-                                        console.log("nomeProf: " + nomeProf.nome);
-                                        fetchLessons(dataFormattata, lezione.materia, lezione.oraInizio, lezione.oraFine, nomeProf.nome ,key);
+                                        //console.log("nomeProf: " + nomeProf.nome);
+
+                                        if(lezione.studente === datiUtente.nome){
+                                            prenotazioni.push({
+                                                key: key,
+                                                data: dataFormattata,
+                                                materia: lezione.materia,
+                                                oraInizio: lezione.oraInizio,
+                                                oraFine: lezione.oraFine,
+                                                professore: nomeProf.nome,
+                                                studente: lezione.studente
+                                            });
+                                        }
+
+
+                                        console.log("pushato" + dataFormattata);
                                     }
                                 })
-
                         }
-
                     }
+
+                    setData(prenotazioni);
+                    console.log("prenotazioni:", prenotazioni);
 
                 }else {
                     console.log('Il percorso "lessons" nel database è vuoto o non esiste.');
                 }
-
             })
-
     }, []);
+
+    // Effetto che logga il contenuto di `data` quando viene aggiornato
+    useEffect(() => {
+        console.log('Data:', {setData});
+    }, [data]);
+
 
     const fetchLessons = async (datalezione, materia, orarioInizio, orarioFine, nomeProf, id) => {
         // Replace with your data fetching logic
@@ -129,6 +177,13 @@ const StudentHomeScreen = () => {
                         acc[date] = { marked: true };
                         return acc;
                     }, {})}
+                    theme={{
+                        selectedDayTextColor: '#2F6AAC', // colore del testo del giorno selezionato
+                        //todayTextColor:  '#2F6AAC', // colore del testo del giorno corrente
+                        arrowColor: '#2F6AAC', // colore delle frecce per navigare tra i mesi
+                        //dotColor: '#2F6AAC', // colore del punto sotto i giorni marcati
+
+                    }}
                 />
             </View>
             <Dialog.Container visible={visible}>
@@ -147,6 +202,23 @@ const StudentHomeScreen = () => {
                 ))}
                 <Dialog.Button label="Cancel" onPress={() => setVisible(false)} />
             </Dialog.Container>
+
+
+            <View style={styles.container}>
+                <FlatList
+                    data={data}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <Text>Data: {item.data}</Text>
+                            <Text>Materia: {item.materia}</Text>
+                            <Text>Professore: {item.professore}</Text>
+                            <Text>Inizio Lezione: {item.oraInizio}</Text>
+                            <Text>Fine Lezione: {item.oraFine}</Text>
+                        </View>
+                    )}
+                    keyExtractor={item => item.key.toString()}
+                />
+            </View>
         </View>
     )
 }
@@ -158,11 +230,16 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop: 20,
         padding: 20,
+        flex: 1,
     },
     calendar:{
-        padding: 20,
+        marginTop: 50,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'white',
+        borderWidth: 2,
+        borderRadius: 10,
+        borderColor: '#2F6AAC',
     },
     lessonContainer: {
         marginVertical: 10,
@@ -183,5 +260,13 @@ const styles = StyleSheet.create({
     dialogButtonText: {
         color: 'white',
         fontSize: 16
-    }
+    },
+
+
+    item: {
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: '#f9f9f9',
+        borderRadius: 5,
+    },
 })
