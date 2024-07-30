@@ -5,7 +5,7 @@ import Button from '../components/CustomButton';
 import ButtonComp from '../components/CustomButton.js';
 import React, { useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { getDatabase, ref, push, set } from 'firebase/database';
+import {getDatabase, ref, push, set, update} from 'firebase/database';
 
 const AddDisponibility = () => {
     const navigation = useNavigation();
@@ -21,6 +21,9 @@ const AddDisponibility = () => {
     const [selectedSubject, setSelectedSubject] = useState(null);
 
     const subjectsArray = datiUtente.materia;
+
+    console.log(JSON.stringify(datiUtente, null, 2));
+
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -122,7 +125,24 @@ const AddDisponibility = () => {
 
             return set(newDispRef, newDispData)
                 .then(() => {
+                    const db = getDatabase();
+                    const newDispId = newDispRef.key;  // Ottieni l'ID della nuova disponibilità
+
                     console.log('Nuova disponibilita aggiunto con successo:', newDispData);
+                    console.log('ID della nuova disponibilita:', newDispId);
+
+
+                    // uso ID della disponibilità come necessario, per esempio aggiorna i dati del professore
+                    const profRef = ref(db, `teachers/${datiUtente.id}/lessons`);
+                    update(profRef, { [newDispId]: true })
+                        .then(() => {
+                            console.log('Lezione associata al professore con successo.');
+                        })
+                        .catch(error => {
+                            console.error('Errore durante l\'aggiornamento del professore:', error);
+                        });
+
+
                     navigation.navigate('TeacherHome', {
                         dati: datiUtente
                     });

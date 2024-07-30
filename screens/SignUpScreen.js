@@ -58,6 +58,7 @@ const SignUpScreen = () => {
                     nome: nome,
                     cognome: cognome,
                     email: email,
+                    lessons: [''],
                 };
 
                 return set(newStudentRef, newStudentData)
@@ -79,7 +80,8 @@ const SignUpScreen = () => {
                 const newTeacherData = {
                     email: email,
                     nome: nome,
-                    materia: ['']
+                    materia: [''],
+                    lessons: [''],
                 };
 
                 return set(newTeacherRef, newTeacherData) // Aggiunge i dati del nuovo insegnante al database

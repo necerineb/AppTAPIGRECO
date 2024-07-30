@@ -18,6 +18,12 @@ const StudentHomeScreen = () => {
     const route = useRoute();
     const datiUtente = route.params?.dati;
     const tipoUtente = route.params?.tipo;
+    const [studentId, setStudentId] = useState(null);
+
+
+    //console.log("dati studente che ho: " + datiUtente);
+    console.log(JSON.stringify(datiUtente, null, 2));
+
 
     useEffect(() => {
         // Fetch available lessons for the student
@@ -59,7 +65,7 @@ const StudentHomeScreen = () => {
                                         fetchLessons(dataFormattata, lezione.materia, lezione.oraInizio, lezione.oraFine, nomeProf.nome ,key);
                                     }
                                 })
-                        }else if(lezione.studente === datiUtente.nome &&
+                        }else if(lezione.studente === datiUtente.email &&
                             (
                                 elementiData[0] >= today.getMonth() + 1 && elementiData[2] == today.getFullYear()
 
@@ -75,7 +81,7 @@ const StudentHomeScreen = () => {
                             )){
 
                             console.log("sono uguali");
-                            console.log("nome utente: " + datiUtente.nome +  "   e' uguale a: " + lezione.studente);
+                            console.log("nome utente: " + datiUtente.email +  "   e' uguale a: " + lezione.studente);
                             const refProf = ref(getDatabase(), 'teachers/' + lezione.professore);
 
                             get(refProf)
@@ -84,7 +90,7 @@ const StudentHomeScreen = () => {
                                         const nomeProf = snapshot.val();
                                         //console.log("nomeProf: " + nomeProf.nome);
 
-                                        if(lezione.studente === datiUtente.nome){
+                                        if(lezione.studente === datiUtente.email){
                                             prenotazioni.push({
                                                 key: key,
                                                 data: dataFormattata,
@@ -153,7 +159,7 @@ const StudentHomeScreen = () => {
         //console.log("percorso: " + percorso.toString().substring(50));
         const db = getDatabase();
 
-        update(ref(db, "lessons/" + lesson.id), {studente: datiUtente.nome})
+        update(ref(db, "lessons/" + lesson.id), {studente: datiUtente.email})
             .then(() => {
                 console.log('studente aggiunto alla lezione');
 
@@ -162,7 +168,15 @@ const StudentHomeScreen = () => {
                 console.error('Errore durante l\'aggiornamento dei campi:', error);
             });
 
-        setVisible(false);
+        const profRef = ref(db, `students/${datiUtente.id}/lessons`);
+        update(profRef, { [lesson.id]: true })
+            .then(() => {
+                console.log('Lezione associata allo studente con successo.');
+            })
+            .catch(error => {
+                console.error('Errore durante l\'aggiornamento del professore:', error);
+            });
+
     };
 
     return(
@@ -261,7 +275,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16
     },
-
 
     item: {
         marginBottom: 10,

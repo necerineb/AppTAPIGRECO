@@ -29,11 +29,10 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
-            console.log("dentro " + email + " " + password);
+            //console.log("dentro " + email + " " + password);
 
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-            console.log("id? " + userCredential);
             //const userCredential = await signInWithEmailAndPassword(email, password);
             // Accesso riuscito, puoi navigare alla schermata successiva o eseguire altre azioni
 
@@ -48,7 +47,7 @@ const LoginScreen = () => {
     };
 
     const userData = async (email: string) =>{
-        console.log("dentro con: " + email);
+        //console.log("dentro con: " + email);
         const teachersRef = ref(getDatabase(), 'teachers');
 
         // Esegui una lettura dei dati di tutti gli insegnanti
@@ -65,7 +64,6 @@ const LoginScreen = () => {
 
                     // Cerca l'insegnante con l'email specificata
                     const teacherFound = teachersArray.find(teacher => teacher.email === email);
-                    console.log("provo id: " + JSON.stringify(teacherFound));
                     // Cerca l'insegnante con l'email specificata
                     //const teacherFound = Object.values(teachersData).find(teacher => teacher.email === email);
 
@@ -86,12 +84,19 @@ const LoginScreen = () => {
                                     // Estrai i dati di tutti gli insegnanti dallo snapshot
                                     const studentsData = snapshot.val();
 
+                                    const studentArray = Object.entries(studentsData).map(([studentId, student]) => {
+                                        return { id: studentId, ...student };
+                                    });
+
+                                    const studentsFound = studentArray.find(student => student.email === email);
+
+
                                     // Cerca l'insegnante con l'email specificata
-                                    const studentsFound = Object.values(studentsData).find(student => student.email === email);
+
+                                   //------------------------- const studentsFound = Object.values(studentsData).find(student => student.email === email);
 
                                     if (studentsFound) {
                                         setUser("student");
-                                        console.log("studente trovato: " + studentsFound.nome);
                                         navigation.navigate('StudentHome', {
                                             dati: studentsFound,
                                             tipo: 'studente'
