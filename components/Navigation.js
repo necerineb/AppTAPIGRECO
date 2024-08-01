@@ -7,6 +7,7 @@ import SelectionSubjectScreen from "../screens/SelectionSubjectScreen";
 import TeacherHomeScreen from "../screens/TeacherHomeScreen";
 import StudentHomeScreen from "../screens/StudentHomeScreen";
 import addDisponibility from "../screens/AddDisponibility";
+import PlanningWeek from "../screens/PlanningWeek";
 const Stack = createStackNavigator();
 
 const Navigation = () => {
@@ -19,6 +20,8 @@ const Navigation = () => {
                 <Stack.Screen name='StudentHome' component={StudentHomeScreen} options={{headerShown: false}}/>
                 <Stack.Screen name='TeacherHome' component={TeacherHomeScreen} options={{headerShown: false}}/>
                 <Stack.Screen name='Disponibilita' component={addDisponibility} options={{headerShown: false}}/>
+                <Stack.Screen name='Pianificazione' component={PlanningWeek} options={{headerShown: false}}/>
+
             </Stack.Navigator>
         </NavigationContainer>
     );

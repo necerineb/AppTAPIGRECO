@@ -59,6 +59,15 @@ const HomeScreenT = () => {
                 />
             </View>
 
+            <View style={styles.comando}>
+                <Button
+                    text={"programma settimana"}
+                    onPress={() => navigation.navigate("Pianificazione", {
+                        data: datiUtente
+                    })}
+                />
+            </View>
+
             <View style={styles.container}>
                 <FlatList
                     data={data}
