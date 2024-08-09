@@ -5,7 +5,7 @@ import Button from '../components/CustomButton';
 import ButtonComp from '../components/CustomButton.js';
 import React, { useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import {getDatabase, ref, push, set, update} from 'firebase/database';
+import { getDatabase, ref, push, set, update } from 'firebase/database';
 
 const AddDisponibility = () => {
     const navigation = useNavigation();
@@ -23,7 +23,6 @@ const AddDisponibility = () => {
     const subjectsArray = datiUtente.materia;
 
     console.log(JSON.stringify(datiUtente, null, 2));
-
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -75,13 +74,13 @@ const AddDisponibility = () => {
         const minutes = time.getMinutes();
         const ore = time.getHours();
 
-        if(ore < 14 || ore > 18){
+        if (ore < 14 || ore > 18) {
             Alert.alert('Error', 'lo studio apre alle 14:30 e chiude alle 19');
             return null;
-        }else if(ore === 14 && minutes < 30){
+        } else if (ore === 14 && minutes < 30) {
             Alert.alert('Error', 'lo studio apre alle 14:30');
             return null;
-        }else{
+        } else {
             if (minutes >= 30) {
                 time.setMinutes(30);
             } else {
@@ -126,13 +125,11 @@ const AddDisponibility = () => {
             return set(newDispRef, newDispData)
                 .then(() => {
                     const db = getDatabase();
-                    const newDispId = newDispRef.key;  // Ottieni l'ID della nuova disponibilità
+                    const newDispId = newDispRef.key;
 
                     console.log('Nuova disponibilita aggiunto con successo:', newDispData);
                     console.log('ID della nuova disponibilita:', newDispId);
 
-
-                    // uso ID della disponibilità come necessario, per esempio aggiorna i dati del professore
                     const profRef = ref(db, `teachers/${datiUtente.id}/lessons`);
                     update(profRef, { [newDispId]: true })
                         .then(() => {
@@ -141,7 +138,6 @@ const AddDisponibility = () => {
                         .catch(error => {
                             console.error('Errore durante l\'aggiornamento del professore:', error);
                         });
-
 
                     navigation.navigate('TeacherHome', {
                         dati: datiUtente
@@ -196,8 +192,10 @@ const AddDisponibility = () => {
             <RNPickerSelect
                 onValueChange={(value) => setSelectedSubject(value)}
                 items={renderPickerOptions()}
-                placeholder={{ label: 'Select Subject', value: null }}
-            />
+                placeholder={{ label: 'Seleziona Materia', value: null }}
+            >
+                <Button text="Seleziona Materia" />
+            </RNPickerSelect>
 
             <Text style={styles.selectedDateText}>
                 Data lezione: {selectedDate ? selectedDate.toLocaleDateString() : ''}
@@ -217,8 +215,8 @@ const AddDisponibility = () => {
 
             <View style={styles.fatto}>
                 <ButtonComp
-                            text="fatto"
-                            onPress={createDisponibility}
+                    text="fatto"
+                    onPress={createDisponibility}
                 />
             </View>
 

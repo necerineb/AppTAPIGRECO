@@ -183,7 +183,7 @@ const PlanningWeek = () => {
             <RNPickerSelect
                 onValueChange={(value) => setSelectedSubject(value)}
                 items={renderPickerOptions()}
-                placeholder={{ label: 'Select Subject', value: null }}
+                placeholder={{ label: 'Seleziona Materia', value: null }}
             />
 
             <Text style={styles.selectedDateText}>
